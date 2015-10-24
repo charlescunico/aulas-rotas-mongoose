@@ -1,0 +1,14 @@
+ASSUNDO DO EMAIL:
+[WebMob UNOESC Chapecó] Aula rotas Mongoose
+
+aula-rotas-mongoose
+
+git init
+
+git add .
+
+git commit -m "SUBINDO"
+
+git remote add [COLA A LINHA AQUI]
+
+git push origin master
