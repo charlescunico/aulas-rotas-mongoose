@@ -1,32 +1,5 @@
 var http = require('http');
-
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/pos-unoesc');
-
-var db = mongoose.connection;
-
-db.on('error', function(err){
-	console.log('Erro de conexão.', err);
-});
-db.on('open', function() {
-	console.log('Conexão aberta.');
-});
-db.on('connected', function(err) {
-	console.log('Desconectado.');
-});
-
-var Schema = mongoose.Schema;
-var json_schema = {
-	name: {type: String, default: ''},
-	description: {type: String, default: ''},
-	alchool: {type: Number, min: 0},
-	category: {type: String, default: ''},
-	create_at: {type: Date, default: Date.now}
-};
-
-var BeerSchema = new Schema(json_schema);
-
-var Beer = mongoose.model('Beer', BeerSchema);
+var Model = require('./model');
 
 Controller = {
 	create: function(req, res){
@@ -37,7 +10,7 @@ Controller = {
 			price: 3.0,
 			category: 'pilsen'
 		}, 
-		model = new Beer(dados),
+		model = new Model(dados),
 		msg = '';
 		model.save(function(err, data) {
 			if (err) {
@@ -51,7 +24,7 @@ Controller = {
 		});
 	},
 	retrieve: function(req, res){
-		var Beer = mongoose.model('Beer', BeerSchema), query = {};
+		var Beer = Model, query = {};
 
 		Beer.find(query, function(err, data) {
 			if (err) {
@@ -65,7 +38,7 @@ Controller = {
 		});
 	},
 	update: function(req, res){
-		var Beer = mongoose.model('Beer', BeerSchema), query = {name: /skol/i};
+		var Beer = Model, query = {name: /skol/i};
 
 		var mod = {
 			name: 'Brahma',
@@ -85,13 +58,13 @@ Controller = {
 				msg = 'Erro: ' + err;
 			} else {
 				console.log('Cervejas atualizadas com sucesso: ', data);
-				msg = 'Cervejas atualizadas com sucesso: ' + data;
+				msg = 'Cervejas atualizadas com sucesso: ' + data.nModified;
 			}
 			res.end(msg);
 		});
 	},
 	delete: function(req, res){
-		var Beer = mongoose.model('Beer', BeerSchema), query = {name: /brahma/i};
+		var Beer = Model, query = {name: /brahma/i};
 
 		// É multi: true CUIDADO!
 		Beer.remove(query, function(err, data) {
@@ -100,7 +73,7 @@ Controller = {
 				msg = 'Erro: ' + err;
 			} else {
 				console.log('Cerveja deletada com sucesso: ', data.result);
-				msg = 'Cerveja deletada com sucesso: ' + data.result;
+				msg = 'Cerveja deletada com sucesso: ' + data.result.n;
 			}
 			res.end(msg);
 		});
